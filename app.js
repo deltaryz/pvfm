@@ -1,6 +1,8 @@
 // PonyvilleFM Web Interface & Mobile App
 // Created by deltaryz
 
+console.log("Testing git pull");
+
 // This represents the current selected stream
 // Default is MP3 320 (Best Quality)
 let stream_url = "https://dj.bronyradio.com/streamhq.mp3";

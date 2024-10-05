@@ -1,0 +1,15 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.deltaryz.pvfm",
+            "sha256_cert_fingerprints": [
+                "27:9D:19:26:59:F7:5F:4E:5B:9F:66:3C:0F:24:93:82:5E:72:8B:FA:93:97:09:AF:CD:4B:99:CB:1C:B5:23:2D",
+                "85:3D:62:64:8F:03:4B:E5:F2:EB:FE:5F:31:41:2C:95:E6:21:C6:B7:4C:E5:3A:D9:03:16:60:BD:2E:DD:0D:C8"
+            ]
+        }
+    }
+]

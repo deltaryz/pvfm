@@ -1,0 +1,97 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #232323;
+  color: white;
+}
+
+#resetButton {
+  font-size: 15px;
+  width: 150px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+img {
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
+}
+
+#resetButton {
+  border-radius: 20px;
+  border: none;
+}
+
+#select {
+  background-color: white;
+  width: 200px;
+  height: 30px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 25px;
+}
+
+#credits {
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 5px;
+  font-size: smaller;
+  filter: drop-shadow(1px 1px 2px black);
+}
+
+a {
+  font-weight: bold;
+  color: #00ff2a;
+  text-decoration: none;
+}
+
+#container {
+  background-color: rgba(0, 0, 0, 0.3);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 25px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 25px;
+  max-width: 350px;
+  filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.4));
+}
+
+#eventName {
+  background-color: rgb(29, 29, 29);
+  font-size: 15px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius: 10px;
+}
+
+#listeners {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* This elaborate fuckery keeps it centered */
+.outer {
+  display: table;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.middle {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.inner {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 350px;
+}

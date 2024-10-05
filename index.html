@@ -1,0 +1,128 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PonyvilleFM</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="./favicon.ico">
+
+    <!-- Theme colors  -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="#232323">
+    <meta name="theme-color" content="#232323" />
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js').then((registration) => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                }).catch((error) => {
+                    console.error('Service Worker registration failed:', error);
+                });
+            });
+        }
+    </script>
+
+    <!-- Prevent caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="PVFM Web Player">
+    <meta property="og:description" content="PonyvilleFM Mobile-Friendly Web Player
+        
+Installable as a PWA and Android APK">
+    <meta property="og:image" content="https://pvfm.deltaryz.com/icon.png">
+    <meta property="og:url" content="https://pvfm.deltaryz.com/">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card meta tags -->
+    <meta name="twitter:title" content="PVFM Web Player">
+    <meta name="twitter:description" <meta property="og:description" content="PonyvilleFM Mobile-Friendly Web Player
+        
+Installable as a PWA and Android APK">
+    <meta name="twitter:image" content="https://pvfm.deltaryz.com/icon.png">
+    <meta name="twitter:url" content="https://pvfm.deltaryz.com/">
+
+</head>
+
+<body>
+
+    <div class="outer">
+        <div class="middle">
+            <div class="inner">
+
+                <a href="https://ponyvillefm.com/" target="_blank" rel="noopener">
+                    <img src="./pvfmlogo.png" style=" max-height:50px;" />
+                </a>
+
+                <!-- Metadata -->
+
+                <div id="container" style="display: flex; align-items: center; gap: 10px;">
+                    <!-- Play/pause -->
+                    <button id="playPauseButton" style="border: none; background: transparent; padding: 0;">
+                        <img id="playPauseIcon" src="play.svg" alt="Play Icon" style="width: 80px; height: 80px;">
+                    </button>
+
+                    <!-- Text section for artist and title -->
+                    <div id="text" style="display: flex; flex-direction: column; width:100%; text-align: left;;">
+                        <div id="artist"
+                            style="font-weight: bolder; color:rgba(255, 255, 255, 0.713); padding-bottom:10px; font-size:15px;">
+                            PonyvilleFM
+                        </div>
+                        <div id="title" style="filter:drop-shadow(2px 2px 2px black); font-size:13px;">
+                            Getting track info...
+                        </div>
+                    </div>
+                </div>
+
+                <div id="streamSelector"></div>
+
+                <br />
+
+                <!-- Reset -->
+                <button id="resetButton">↻ Reset Stream</button>
+
+                <br /><br />
+
+                <!-- Volume slider  -->
+                <input style="width: 400px; max-width: 60%;" title="Volume Control" type="range" id="volumeControl"
+                    class="slider" min="0" max="100" value="100" />
+
+                <br />
+
+                <!-- TODO: Replace with person icon instead of 'Listeners' -->
+                <div id="listeners">
+                    Listeners: ??
+                </div>
+
+                <br />
+
+                <!-- The 'hidden' property is removed when we receive metadata -->
+                <div id="eventDisplay" style="color:rgba(255, 255, 255, 0.70)" hidden>
+                    <div id="eventStatus" style="font-size: small;">Next event:</div>
+                    <div id="eventName">
+                        <b id="eventTitle">PLACEHOLDER</b> <br />
+                        <i style="font-size: 12px;">presented by</i>
+                        <i>PLACEHOLDER</i>
+                    </div>
+                    <div id="timeUntilEvent" style="margin-top:5px; font-size: 12px; color: rgba(255, 255, 255, 0.50)"
+                        hidden>69 hours 69 minutes</div>
+                </div>
+            </div>
+
+            <br />
+
+            <button id="installPWA" hidden style="margin-bottom: 20px;">Install PWA</button>
+
+            <div id="credits">
+                Made with 💜 by <a href="https://deltaryz.com" target="_blank" rel="noopener">∆•RYZ</a> and <a
+                    href="https://ponyvillefm.com" target="_blank" rel="noopener">PVFM</a>
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>

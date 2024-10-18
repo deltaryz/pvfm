@@ -320,7 +320,7 @@ async function fetchSongDetails() {
     // Override PVFM2
     if (currentStream.albumText == "PonyvilleFM2 Chill") {
       response = await fetch(
-        "http://luna.ponyvillefm.com/api/nowplaying_static/pvfm2.json"
+        "https://luna.ponyvillefm.com/api/nowplaying_static/pvfm2.json"
       );
       data = await response.json();
       nowPlayingData = data.now_playing.song || {};

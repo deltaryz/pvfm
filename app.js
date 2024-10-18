@@ -26,14 +26,19 @@ const streamUrls = {
     albumText: "PonyvilleFM",
     albumart: "./pvfm1.png",
   },
+  "PVFM2 Chill - MP3 128": {
+    url: "https://luna.ponyvillefm.com/listen/pvfm2/radio.mp3",
+    albumText: "PonyvilleFM2 Chill",
+    albumart: "./pvfm2.png",
+  },
   "PVFM3 No DJs - MP3 128": {
     url: "https://dj.bronyradio.com/pvfmfree.mp3",
-    albumText: "PonyvilleFM No DJs",
+    albumText: "PonyvilleFM3 No DJs",
     albumart: "./pvfm3.png",
   },
   "PVFM3 No DJs - Vorbis 112": {
     url: "https://dj.bronyradio.com/pvfmfree.ogg",
-    albumText: "PonyvilleFM No DJs",
+    albumText: "PonyvilleFM3 No DJs",
     albumart: "./pvfm3.png",
   },
   "Luna Radio - MP3 128": {
@@ -312,18 +317,38 @@ async function fetchSongDetails() {
     //   // We are listening to PVFM
     //   console.log("We are listening to PVFM");
 
-    // Pull pvfm metadata
-    response = await fetch("https://ponyvillefm.com/data/nowplaying");
-    data = await response.json();
+    // Override PVFM2
+    if (currentStream.albumText == "PonyvilleFM2 Chill") {
+      response = await fetch(
+        "http://luna.ponyvillefm.com/api/nowplaying_static/pvfm2.json"
+      );
+      data = await response.json();
+      nowPlayingData = data.now_playing.song || {};
 
-    nowPlayingData = data.one || {}; // TODO: PVFM2/3 metadata
-    if (currentStream.albumText == "Luna Radio")
-      nowPlayingData = data.lunaradio || {};
+      // Populate local medatata
+      songDetails.listeners = data.listeners.current || "";
+      songDetails.artist = nowPlayingData.artist || "";
+      songDetails.title = nowPlayingData.title || "";
+    } else {
+      // Pull pvfm metadata
+      response = await fetch("https://ponyvillefm.com/data/nowplaying");
+      data = await response.json();
+      nowPlayingData = data.one || {};
 
-    // Populate local metadata
-    songDetails.listeners = nowPlayingData.listeners || "";
-    songDetails.artist = nowPlayingData.artist || "";
-    songDetails.title = nowPlayingData.title || "";
+      // TODO: Maybe use a different field than albumText for this?
+      // Override Luna Radio
+      if (currentStream.albumText == "Luna Radio")
+        nowPlayingData = data.lunaradio || {};
+
+      // Override PVFM3
+      if (currentStream.albumText == "PonyvilleFM3 No DJs")
+        nowPlayingData = data.free || {};
+
+      // Populate local metadata
+      songDetails.listeners = nowPlayingData.listeners || "";
+      songDetails.artist = nowPlayingData.artist || "";
+      songDetails.title = nowPlayingData.title || "";
+    }
 
     songDetails.album = currentStream.albumText; // Use album name associated with URL
     songDetails.albumArt = currentStream.albumart; // Use album art associated with URL

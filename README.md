@@ -1,8 +1,8 @@
-# PVFM Mobile-Friendly Web Interface, PWA, & Mobile App
+# PVFM Mobile-Friendly Web Player, PWA, & Mobile App
 
 ![App Icon](192.png)
 
-## Releasing soon on the Google Play Store!
+## Now available in the [Google Play Store!](https://play.google.com/store/apps/details?id=com.deltaryz.pvfm)
 
 PonyvilleFM is an internet radio station featuring live DJ performances, album release events, and over a decade of "Brony" community music playing 24/7 across multiple stations. This app seeks to become the definitive way to experience PVFM, conveniently accessible right here from the Play Store, and online at [pvfm.deltaryz.com](https://pvfm.deltaryz.com)!
 
@@ -20,3 +20,5 @@ PonyvilleFM is an internet radio station featuring live DJ performances, album r
 [PonyvilleFM official website](https://ponyvillefm.com)
 
 [Run this app in your browser!](https://pvfm.deltaryz.com)
+
+[Google Play Store](https://play.google.com/store/apps/details?id=com.deltaryz.pvfm)

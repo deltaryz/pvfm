@@ -10,7 +10,7 @@
         {
             "purpose": "maskable",
             "sizes": "512x512",
-            "src": "androidicon.png",
+            "src": "./androidicon.png",
             "type": "image/png"
         },
         {
@@ -26,11 +26,18 @@
     ],
     "screenshots": [
         {
-            "src": "screenshot_mobile.jpg",
-            "sizes": "1125x2023",
-            "type": "image/jpg",
+            "src": "./gplay/mascot.png",
+            "sizes": "1080x1920",
+            "type": "image/png",
             "form_factor": "narrow",
-            "label": "Player View Mobile"
+            "label": "Featuring Aerial Soundwaves"
+        },
+        {
+            "src": "./gplay/livedjs.png",
+            "sizes": "1080x1920",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Current performers at ponyvillefm.com/shows"
         },
         {
             "src": "screenshot_wide.png",

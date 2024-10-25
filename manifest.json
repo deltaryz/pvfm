@@ -1,12 +1,18 @@
 {
     "name": "PonyvilleFM",
     "short_name": "PVFM",
-    "description": "Mobile-friendly player for PonyvilleFM with rich metadata",
+    "description": "Internet radio with live DJs, album events, and 13+ years of Brony music",
     "display": "standalone",
     "background_color": "#232323",
     "theme_color": "#232323",
     "start_url": "./index.html",
     "icons": [
+        {
+            "purpose": "maskable",
+            "sizes": "512x512",
+            "src": "androidicon.png",
+            "type": "image/png"
+        },
         {
             "src": "./512.png",
             "sizes": "512x512",

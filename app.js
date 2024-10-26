@@ -1,52 +1,73 @@
 // PonyvilleFM Web Interface & Mobile App
 // Created by deltaryz
 
+// TODO: Detect unqiue albumart for PVFM2 and Luna since azuracast actually gives us that
+
 // This represents the current selected stream
 // Default is MP3 320 (Best Quality)
 let stream_url = "https://dj.bronyradio.com/streamhq.mp3";
+let selected_stream = "PonyvilleFM";
 
-const streamUrls = {
-  "Best Quality - MP3 320": {
-    url: "https://dj.bronyradio.com/streamhq.mp3",
+let streams = {
+  "PonyvilleFM": {
+    urls: {
+      "Best Quality - MP3 320": "https://dj.bronyradio.com/streamhq.mp3",
+      "Good Quality - Opus VBR": "https://dj.bronyradio.com/pvfmopus.ogg",
+      "Okay Quality - Vorbis 112": "https://dj.bronyradio.com/pvfm1.ogg",
+      "Low Quality - AAC-LC 64": "https://dj.bronyradio.com/pvfm1mobile.aac",
+    },
     albumText: "PonyvilleFM",
     albumart: "./pvfm1.png",
+    lastQuality: 2, // We modify this to keep track of what the user selected
   },
-  "Good Quality - Opus VBR": {
-    url: "https://dj.bronyradio.com/pvfmopus.ogg",
-    albumText: "PonyvilleFM",
-    albumart: "./pvfm1.png",
-  },
-  "Okay Quality - Vorbis 112": {
-    url: "https://dj.bronyradio.com/pvfm1.ogg",
-    albumText: "PonyvilleFM",
-    albumart: "./pvfm1.png",
-  },
-  "Low Quality - AAC+ 64": {
-    url: "https://dj.bronyradio.com/pvfm1mobile.aac",
-    albumText: "PonyvilleFM",
-    albumart: "./pvfm1.png",
-  },
-  "PVFM2 Chill - MP3 128": {
-    url: "https://luna.ponyvillefm.com/listen/pvfm2/radio.mp3",
+  "PonyvilleFM2 Chill": {
+    urls: {
+      "MP3 128": "https://luna.ponyvillefm.com/listen/pvfm2/radio.mp3",
+    },
     albumText: "PonyvilleFM2 Chill",
     albumart: "./pvfm2.png",
+    lastQuality: 0,
   },
-  "PVFM3 No DJs - MP3 128": {
-    url: "https://dj.bronyradio.com/pvfmfree.mp3",
+  "PonyvilleFM3 No DJs": {
+    urls: {
+      "MP3 128": "https://dj.bronyradio.com/pvfmfree.mp3",
+      "Vorbis 112": "https://dj.bronyradio.com/pvfmfree.ogg",
+    },
     albumText: "PonyvilleFM3 No DJs",
     albumart: "./pvfm3.png",
+    lastQuality: 0,
   },
-  "PVFM3 No DJs - Vorbis 112": {
-    url: "https://dj.bronyradio.com/pvfmfree.ogg",
-    albumText: "PonyvilleFM3 No DJs",
-    albumart: "./pvfm3.png",
-  },
-  "Luna Radio - MP3 128": {
-    url: "https://luna.ponyvillefm.com/listen/lunaradio/radio.mp3",
+  "Luna Radio": {
+    urls: {
+      "MP3 128": "https://luna.ponyvillefm.com/listen/lunaradio/radio.mp3",
+    },
     albumText: "Luna Radio",
     albumart: "./lunaradio.png",
+    lastQuality: 0,
   },
-};
+}
+
+// Override lastQuality with local setting if present
+for (const [stationName, stationData] of Object.entries(streams)) {
+  console.log("Checking settings for " + stationName);
+  let qualitySetting = localStorage.getItem(stationName);
+  if(qualitySetting) {
+    console.log("Found, default is " + qualitySetting)
+    streams[stationName].lastQuality = qualitySetting; // set to that
+  }else{
+    console.log("No saved quality");
+    streams[stationName].lastQuality = 0; // top is default
+  }
+}
+
+// check for selectedStream local setting and apply if necessary
+let selected_stream_setting = localStorage.getItem("selectedStream");
+if(selected_stream_setting){
+  selected_stream = selected_stream_setting;
+}
+
+// Set stream_url to what we had last
+stream_url = Object.values(streams[selected_stream].urls)[streams[selected_stream].lastQuality];
 
 // We will manipulate these throughout operation of the program
 let schedule;
@@ -69,6 +90,10 @@ const artistField = document.getElementById("artist");
 const titleField = document.getElementById("title");
 const listenersField = document.getElementById("listeners");
 const streamSelector = document.getElementById("streamSelector");
+
+const stationSelector = document.getElementById("stationSelector");
+const qualitySelector = document.getElementById("qualitySelector");
+
 const installPWAButton = document.getElementById("installPWA");
 const eventDisplay = document.getElementById("eventDisplay");
 const eventStatus = document.getElementById("eventStatus");
@@ -121,66 +146,96 @@ window.addEventListener("resize", function (event) {
   window.resizeTo(500, 700);
 });
 
-// Create the stream selector
-const selectElement = document.createElement("select");
-selectElement.id = "select";
+// Dropdown to select station
+let stationSelectorDropdown = document.createElement("select");
+stationSelectorDropdown.id = "select";
 
-// Populate the <select> with options from streamUrls
-// ^ does that require a GDPR notice?
-for (const [name, data] of Object.entries(streamUrls)) {
-  const option = document.createElement("option");
-  option.value = data.url;
-  option.textContent = name;
-  selectElement.appendChild(option);
+// Dropdown to select quality
+let qualitySelectorDropdown = document.createElement("select");
+qualitySelectorDropdown.id = "select";
+
+// Wipe and recreate quality selector based on provided station
+let recreateQualityDropdown = function(station) {
+  qualitySelectorDropdown.options.length = 0; // remove existing options
+  let currentIndex = 0;
+  for (const [qualityName, qualityData] of Object.entries(streams[station].urls)) {
+    const qualityOption = document.createElement("option");
+    qualityOption.textContent = qualityName;
+    qualityOption.value = currentIndex;
+    currentIndex++;
+    qualitySelectorDropdown.appendChild(qualityOption);
+  }
+  qualitySelectorDropdown.selectedIndex = streams[station].lastQuality;
 }
 
-// Add the <select> to the streamSelector <div>
-streamSelector.appendChild(selectElement);
+// Populate the station selector dropdown 
+for (const [stationName, stationData] of Object.entries(streams)) {
+  const stationOption = document.createElement("option");
+  stationOption.textContent = stationName;
+  stationSelectorDropdown.appendChild(stationOption);
 
-// Change stream and update dropdown with index (DOES NOT RESET/START PLAYING)
-let changeStream = function (index) {
-  const selectedOption = selectElement.options[index];
+  // select the default one
+  if(selected_stream == stationName) stationOption.selected = true;
+}
 
-  selectElement.selectedIndex = index;
+// Change streams and update dropdowns
+// Respects default stream setting
+// DOES NOT RESET / START PLAYING
+let changeStreamAndQuality = function (streamName, streamQualityIndex) {
 
-  console.log(
-    `Selected: ${selectedOption.text}\n\nSaving to settings:\n` + index
-  );
+  // update streams
+  streams[streamName].lastQuality = streamQualityIndex;
 
   // save to localStorage
-  localStorage.setItem("stream", index);
+  localStorage.setItem(streamName, streamQualityIndex);
+  localStorage.setItem("selectedStream", streamName);
+
+  recreateQualityDropdown(streamName);
+  const newStreamUrl = Object.values(streams[streamName].urls)[streamQualityIndex];
+  console.log("Selected new stream URL: " + newStreamUrl);
 
   stopStreaming();
 
-  // update stream_url variable
-  stream_url = selectedOption.value;
-};
-
-// Check settings
-// TODO: make this less shit this is a mess
-let settings_stream = localStorage.getItem("stream");
-let settings_volume = localStorage.getItem("volume");
-
-// Set stream switcher to saved value if present
-if (settings_stream) {
-  console.log("Saved stream setting is present:\n" + settings_stream);
-  changeStream(settings_stream);
+  selected_stream = streamName;
+  stream_url = newStreamUrl;
 }
+
+// init dropdowns
+changeStreamAndQuality(selected_stream, streams[selected_stream].lastQuality);
+
+// Change the station
+stationSelectorDropdown.addEventListener("change",  function(event) {
+  console.log("User selected station: " + event.target.value);
+
+  // Respect last selected quality
+  changeStreamAndQuality(event.target.value, streams[event.target.value].lastQuality);
+  resetStream();
+});
+
+// Change the quality
+qualitySelectorDropdown.addEventListener("change", function(event){
+  let newUrl = Object.values(streams[selected_stream].urls)[event.target.value];
+
+  console.log("User selected quality index: " + event.target.value);
+  console.log("This becomes URL: " + newUrl)
+
+  changeStreamAndQuality(selected_stream, event.target.value);
+  resetStream();
+});
+
+// Add the dropdowns to the page
+stationSelector.appendChild(stationSelectorDropdown);
+stationSelector.appendChild(qualitySelectorDropdown);
 
 console.log("Stream URL: " + stream_url);
 
 // set volume to saved value if present
+let settings_volume = localStorage.getItem("volume");
 if (settings_volume) {
   console.log("Saved volume setting is present:\n" + settings_volume);
   if (audio != undefined) audio.volume = settings_volume;
   volumeControl.value = settings_volume * 100;
 }
-
-// Listen for changes in the <select> (when a new option is selected)
-selectElement.addEventListener("change", function () {
-  changeStream(selectElement.selectedIndex);
-  resetStream();
-});
 
 console.log("Volume: " + volumeControl.value);
 
@@ -288,8 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // fetch and update song details
 async function fetchSongDetails() {
   try {
-    let currentStream =
-      streamUrls[selectElement.options[selectElement.selectedIndex].text];
+    let currentStream = streams[selected_stream];
 
     let response;
     let data;

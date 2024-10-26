@@ -442,6 +442,10 @@ async function fetchSchedule() {
     if (data.result && data.result.length > 0) {
       schedule = data.result;
       const firstEvent = data.result[0];
+      
+      // Sorry ND but your name shouldnt be in the title, its also right below it
+      let firstEventName = firstEvent.name;
+      if(firstEventName == "Lantern In The Dark with Nicolas Dominique") firstEventName = "Lantern In The Dark";
 
       // Log the event details
       console.log(`First event: ${firstEvent.name}`);
@@ -459,7 +463,7 @@ async function fetchSchedule() {
       // Put upcoming event title in box
       eventName.innerHTML =
         "<b>" +
-        firstEvent.name +
+        firstEventName +
         '</b> <br /><i style="font-size: 12px; color: rgba(255, 255, 255, 0.5);">presented by ' +
         firstEvent.host +
         "</i>";

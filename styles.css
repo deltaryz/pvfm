@@ -61,24 +61,28 @@ a {
 }
 
 .eventName {
-  background-color: rgb(29, 29, 29);
+  /* background-color: rgb(29, 29, 29); */
+
+  background-image: linear-gradient(rgb(54, 54, 54), rgb(34, 34, 34));
+  filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.7));
 
   font-size: 15px;
   margin-left: 10px;
   margin-right: 10px;
+  margin-bottom: 10px;
   margin-top: 5px;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 5px;
   padding-right: 5px;
-  border-radius: 10px;
+  border-radius: 40px;
 }
 
 #scheduleModal .eventName {
   background-image: linear-gradient(rgb(43, 213, 255), rgb(255, 63, 169));
   color: white;
   text-shadow: 1px 1px 1px black;
-  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 1));
+  border-radius: 10px;
 
   margin-bottom: 8px;
 
@@ -126,7 +130,11 @@ a {
 
 .eventPresentedBy {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#scheduleModal .eventPresentedBy {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 #listeners {

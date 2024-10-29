@@ -457,7 +457,6 @@ scheduleButton.onclick = function () {
   var modalElement = document.createElement('div');
   modalElement.id = "scheduleModal"
 
-  // TODO: Replicate the event name and time left for each thing
   // TODO: Unify this with calculateTimeUntilEvent() somehow?
 
   let currentEventIndex = 1;

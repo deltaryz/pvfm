@@ -569,6 +569,7 @@ function calculateTimeUntilEvent(show) {
   if (timeDiffMs > 0) {
     // Event has not started
     eventStatus.innerHTML = "Next event on PVFM:";
+    eventStatus.style.color = "white";
     // Convert the difference to hours and minutes
     const hoursLeft = Math.floor(timeDiffMs / (1000 * 60 * 60));
     const minutesLeft = Math.floor(
@@ -604,6 +605,7 @@ function calculateTimeUntilEvent(show) {
     if (timeEndDiffMs > 0) {
       // Event is live
       eventStatus.innerHTML = "<b>LIVE NOW ON PVFM</b>";
+      eventStatus.style.color = "yellow"
       timeUntilEvent.innerHTML = "";
       console.log(`The event "${show.name}" is live!`);
     } else {

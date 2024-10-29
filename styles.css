@@ -19,6 +19,7 @@ img {
 #resetButton {
   border-radius: 20px;
   border: none;
+  margin-bottom: 15px;
 }
 
 #select {
@@ -29,7 +30,7 @@ img {
   padding-bottom: 5px;
   margin-right: 10px;
   margin-left: 10px;
-  margin-top: 25px;
+  margin-top: 15px;
 }
 
 #credits {
@@ -51,7 +52,7 @@ a {
   padding-bottom: 10px;
   padding-left: 10px;
   padding-right: 10px;
-  margin-top: 25px;
+  margin-top: 15px;
   margin-left: auto;
   margin-right: auto;
   border-radius: 25px;
@@ -59,8 +60,9 @@ a {
   filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.4));
 }
 
-#eventName {
+.eventName {
   background-color: rgb(29, 29, 29);
+
   font-size: 15px;
   margin-left: 10px;
   margin-right: 10px;
@@ -72,9 +74,79 @@ a {
   border-radius: 10px;
 }
 
+#scheduleModal .eventName {
+  background-image: linear-gradient(rgb(43, 213, 255), rgb(255, 63, 169));
+  color: white;
+  text-shadow: 1px 1px 1px black;
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 1));
+
+  margin-bottom: 8px;
+
+  padding-top: 4px;
+  padding-bottom: 4px;
+
+  outline-style: solid;
+  outline-color: black;
+  outline-width: 2px;
+}
+
+.eventDisplay {
+  color: rgba(255, 255, 255, 0.70);
+}
+
+.eventStatus {
+  font-size: small;
+}
+
+.timeUntilEvent {
+  margin-bottom: 10px;
+  margin-top: 5px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.50);
+}
+
+#scheduleModal .timeUntilEvent {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  background-color: black;
+  border-radius: 50px;
+  width: 220px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#scheduleModal .timeUntilEvent {
+  color: white;
+  background-image: linear-gradient(rgb(65, 65, 65), rgb(15, 15, 15));
+  text-shadow: 2px 2px 2px black;
+  filter: drop-shadow(1px 1px 2px black);
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.eventPresentedBy {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
 #listeners {
   margin-top: 10px;
   font-size: 14px;
+}
+
+#scheduleModal {
+  width: 300px;
+  margin: 100px auto;
+  /* margin-top: 15px; */
+  /* background-color: rgba(255, 255, 255, 0.4); */
+
+  background-image: linear-gradient(rgba(197, 197, 197, 0.5), rgba(85, 85, 85, 0.7));
+
+  filter: drop-shadow(0px 0px 12px black);
+  border-radius: 15px;
+
+  padding-top: 5px;
+  padding-bottom: 3px;
 }
 
 /* This elaborate fuckery keeps it centered */

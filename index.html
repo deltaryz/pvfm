@@ -2,6 +2,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PonyvilleFM</title>
+
+    <!-- we use MUI for its modal -->
+    <link href="./mui.min.css" rel="stylesheet" type="text/css" />
+    <script src="./mui.min.js"></script>
+
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="./favicon.ico">
@@ -76,16 +81,15 @@ Installable as a PWA and from Google Play">
                     </div>
                 </div>
 
-                <div id="streamSelector"></div>
-
-                <div id="stationSelector"></div><div id="qualitySelector"></div>
+                <!-- We insert GUI elements in here from the JS  -->
+                <div id="stationSelector"></div>
 
                 <br />
 
                 <!-- Reset -->
                 <button id="resetButton">↻ Reset Stream</button>
 
-                <br /><br />
+                <br />
 
                 <!-- Volume slider  -->
                 <input style="width: 400px; max-width: 60%;" title="Volume Control" type="range" id="volumeControl"
@@ -101,22 +105,22 @@ Installable as a PWA and from Google Play">
                 <br />
 
                 <!-- The 'hidden' property is removed when we receive metadata -->
-                <div id="eventDisplay" style="color:rgba(255, 255, 255, 0.70)" hidden>
-                    <div id="eventStatus" style="font-size: small;">Next event:</div>
-                    <div id="eventName">
+                <div id="eventDisplay" class="eventDisplay" hidden>
+                    <div id="eventStatus" class="eventStatus">Next event:</div>
+                    <div id="eventName" class="eventName">
                         <b id="eventTitle">PLACEHOLDER</b> <br />
-                        <i style="font-size: 12px;">presented by</i>
+                        <i class="eventPresentedBy">presented by</i>
                         <i>PLACEHOLDER</i>
                     </div>
-                    <div id="timeUntilEvent" style="margin-top:5px; font-size: 12px; color: rgba(255, 255, 255, 0.50)"
-                        hidden>69 hours 69 minutes</div>
+                    <div id="timeUntilEvent" class="timeUntilEvent" hidden>69 hours 69 minutes</div>
                 </div>
             </div>
 
-            <br />
-
             <!-- TODO: Something indicating it's in gplay -->
             <button id="installPWA" hidden style="margin-bottom: 20px;">Install PWA</button>
+
+            <!-- Schedule modal -->
+            <button id="scheduleButton" style="margin-bottom: 10px; margin-top:15px;">Schedule</button>
 
             <div id="credits">
                 Made with 💜 by <a href="https://deltaryz.com" target="_blank" rel="noopener">∆•RYZ</a> and <a

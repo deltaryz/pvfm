@@ -1,8 +1,6 @@
 // PonyvilleFM Web Interface & Mobile App
 // Created by deltaryz
 
-// TODO: Detect unqiue albumart for PVFM2 and Luna since azuracast actually gives us that
-
 // This represents the current selected stream
 // Default is MP3 320 (Best Quality)
 let stream_url = "https://dj.bronyradio.com/streamhq.mp3";
@@ -14,7 +12,7 @@ let streams = {
       "Best Quality - MP3 320": "https://dj.bronyradio.com/streamhq.mp3",
       "Good Quality - Opus VBR": "https://dj.bronyradio.com/pvfmopus.ogg",
       "Okay Quality - Vorbis 112": "https://dj.bronyradio.com/pvfm1.ogg",
-      "Low Quality - AAC-LC 64": "https://dj.bronyradio.com/pvfm1mobile.aac",
+      "Low Quality - AAC 64": "https://dj.bronyradio.com/pvfm1mobile.aac",
     },
     albumText: "PonyvilleFM",
     albumart: "./pvfm1.png",
@@ -51,10 +49,10 @@ let streams = {
 for (const [stationName, stationData] of Object.entries(streams)) {
   console.log("Checking settings for " + stationName);
   let qualitySetting = localStorage.getItem(stationName);
-  if(qualitySetting) {
+  if (qualitySetting) {
     console.log("Found, default is " + qualitySetting)
     streams[stationName].lastQuality = qualitySetting; // set to that
-  }else{
+  } else {
     console.log("No saved quality");
     streams[stationName].lastQuality = 0; // top is default
   }
@@ -62,7 +60,7 @@ for (const [stationName, stationData] of Object.entries(streams)) {
 
 // check for selectedStream local setting and apply if necessary
 let selected_stream_setting = localStorage.getItem("selectedStream");
-if(selected_stream_setting){
+if (selected_stream_setting) {
   selected_stream = selected_stream_setting;
 }
 
@@ -89,11 +87,8 @@ const volumeControl = document.getElementById("volumeControl");
 const artistField = document.getElementById("artist");
 const titleField = document.getElementById("title");
 const listenersField = document.getElementById("listeners");
-const streamSelector = document.getElementById("streamSelector");
-
 const stationSelector = document.getElementById("stationSelector");
 const qualitySelector = document.getElementById("qualitySelector");
-
 const installPWAButton = document.getElementById("installPWA");
 const eventDisplay = document.getElementById("eventDisplay");
 const eventStatus = document.getElementById("eventStatus");
@@ -155,7 +150,7 @@ let qualitySelectorDropdown = document.createElement("select");
 qualitySelectorDropdown.id = "select";
 
 // Wipe and recreate quality selector based on provided station
-let recreateQualityDropdown = function(station) {
+let recreateQualityDropdown = function (station) {
   qualitySelectorDropdown.options.length = 0; // remove existing options
   let currentIndex = 0;
   for (const [qualityName, qualityData] of Object.entries(streams[station].urls)) {
@@ -175,7 +170,7 @@ for (const [stationName, stationData] of Object.entries(streams)) {
   stationSelectorDropdown.appendChild(stationOption);
 
   // select the default one
-  if(selected_stream == stationName) stationOption.selected = true;
+  if (selected_stream == stationName) stationOption.selected = true;
 }
 
 // Change streams and update dropdowns
@@ -204,7 +199,7 @@ let changeStreamAndQuality = function (streamName, streamQualityIndex) {
 changeStreamAndQuality(selected_stream, streams[selected_stream].lastQuality);
 
 // Change the station
-stationSelectorDropdown.addEventListener("change",  function(event) {
+stationSelectorDropdown.addEventListener("change", function (event) {
   console.log("User selected station: " + event.target.value);
 
   // Respect last selected quality
@@ -213,7 +208,7 @@ stationSelectorDropdown.addEventListener("change",  function(event) {
 });
 
 // Change the quality
-qualitySelectorDropdown.addEventListener("change", function(event){
+qualitySelectorDropdown.addEventListener("change", function (event) {
   let newUrl = Object.values(streams[selected_stream].urls)[event.target.value];
 
   console.log("User selected quality index: " + event.target.value);
@@ -348,28 +343,7 @@ async function fetchSongDetails() {
     let response;
     let data;
 
-    // This was for the separate luna radio metadata endpoint when HTTPS was broken
-    // PVFM seems to get this fine now?
-
-    // // override with lunaradio if that's what we're hearing
-    // if (currentStream.albumText == "Luna Radio") {
-    //   // We are listening to Luna Radio
-    //   console.log("We are listening to Luna Radio");
-
-    //   // Pull luna metadata
-    //   response = await fetch(
-    //     "https://luna.deltaryz.com" // Doing this myself until sleepy fixes the SSL
-    //   );
-    //   data = await response.json();
-    //   nowPlayingData = data.now_playing.song || {};
-
-    //   // Populate local metadata
-    //   songDetails.listeners = data.listeners.current || "";
-    //   songDetails.artist = nowPlayingData.artist || "";
-    //   songDetails.title = nowPlayingData.title || "";
-    // } else {
-    //   // We are listening to PVFM
-    //   console.log("We are listening to PVFM");
+    // TODO: Detect unqiue albumart for PVFM2 and Luna since azuracast actually gives us that
 
     // Override PVFM2
     if (currentStream.albumText == "PonyvilleFM2 Chill") {
@@ -442,10 +416,10 @@ async function fetchSchedule() {
     if (data.result && data.result.length > 0) {
       schedule = data.result;
       const firstEvent = data.result[0];
-      
+
       // Sorry ND but your name shouldnt be in the title, its also right below it
       let firstEventName = firstEvent.name;
-      if(firstEventName == "Lantern In The Dark with Nicolas Dominique") firstEventName = "Lantern In The Dark";
+      if (firstEventName == "Lantern In The Dark with Nicolas Dominique") firstEventName = "Lantern In The Dark";
 
       // Log the event details
       console.log(`First event: ${firstEvent.name}`);
@@ -464,7 +438,7 @@ async function fetchSchedule() {
       eventName.innerHTML =
         "<b>" +
         firstEventName +
-        '</b> <br /><i style="font-size: 12px; color: rgba(255, 255, 255, 0.5);">presented by ' +
+        '</b> <br /><i class="eventPresentedBy">presented by ' +
         firstEvent.host +
         "</i>";
     } else {
@@ -473,6 +447,111 @@ async function fetchSchedule() {
   } catch (error) {
     console.error("There was a problem with the fetch operation:", error);
   }
+}
+
+// Prep schedule modal when schedule button is clicked
+let scheduleButton = document.getElementById("scheduleButton");
+scheduleButton.onclick = function () {
+  console.log("Activating schedule modal")
+
+  var modalElement = document.createElement('div');
+  modalElement.id = "scheduleModal"
+
+  // TODO: Replicate the event name and time left for each thing
+  // TODO: Unify this with calculateTimeUntilEvent() somehow?
+
+  let currentEventIndex = 1;
+
+  // construct divs for each event
+  for (pvfmEventIndex in schedule) {
+    let pvfmEvent = schedule[pvfmEventIndex];
+
+    // Calculate date
+    const eventDate = new Date(pvfmEvent.start_unix * 1000);
+    const eventEndDate = new Date(pvfmEvent.end_unix * 1000);
+    const now = new Date();
+
+    // Calculate the difference in milliseconds
+    const timeDiffMs = eventDate - now;
+    const timeEndDiffMs = eventEndDate - now;
+
+    // Convert the difference to hours and minutes
+    const hoursLeft = Math.floor(timeDiffMs / (1000 * 60 * 60));
+    const minutesLeft = Math.floor(
+      (timeDiffMs % (1000 * 60 * 60)) / (1000 * 60)
+    );
+
+    // Format options for time display
+    const options = {
+      timeZoneName: "short",
+      hour: "numeric",
+      minute: "numeric",
+      day: "numeric",
+      month: "short",
+    };
+    const localTimeScheduled = eventDate.toLocaleString(undefined, options);
+
+    // Container for each event
+    let eventContainerDiv = document.createElement('div');
+    eventContainerDiv.className = "eventDisplay";
+
+    // Inner metadata
+    let eventStatusDiv = document.createElement('div');
+    eventStatusDiv.className = "eventStatus";
+    let eventNameDiv = document.createElement('div');
+    eventNameDiv.className = "eventName";
+    let eventTimeUntilDiv = document.createElement('div');
+    eventTimeUntilDiv.className = "timeUntilEvent";
+
+    // Add those to the container
+    eventContainerDiv.appendChild(eventStatusDiv);
+    eventContainerDiv.appendChild(eventNameDiv);
+    eventContainerDiv.appendChild(eventTimeUntilDiv);
+
+    eventNameDiv.innerHTML =
+      "<b>" +
+      pvfmEvent.name +
+      '</b> <br /><i class="eventPresentedBy">presented by ' +
+      pvfmEvent.host +
+      "</i>";
+
+    eventTimeUntilDiv.innerHTML =
+      localTimeScheduled +
+      "<br/>" +
+      "Starts in " +
+      hoursLeft +
+      " hours " +
+      minutesLeft +
+      " minutes";
+
+    // Has the event started yet?
+    if (timeDiffMs > 0) {
+      // Event has not started
+
+      // cap at 5 events displayed
+      if (currentEventIndex <= 5) modalElement.appendChild(eventContainerDiv);
+
+    } else {
+      if (timeEndDiffMs > 0) {
+        // Event is live
+
+      } else {
+        // Event has passed
+        // Do nothing
+      }
+    }
+
+    currentEventIndex++;
+
+    console.log(pvfmEvent);
+  }
+
+  mui.overlay('on', modalElement);
+}
+
+// just like the one below it, except for the modal so its different
+function calculateTimeForDisplayModal(show) {
+
 }
 
 // calculate and print remaining time until the event
@@ -489,7 +568,7 @@ function calculateTimeUntilEvent(show) {
 
   // Has the event started yet?
   if (timeDiffMs > 0) {
-    // No
+    // Event has not started
     eventStatus.innerHTML = "Next event on PVFM:";
     // Convert the difference to hours and minutes
     const hoursLeft = Math.floor(timeDiffMs / (1000 * 60 * 60));
@@ -524,8 +603,8 @@ function calculateTimeUntilEvent(show) {
     // Should this be calculated independently from the metadata update?
   } else {
     if (timeEndDiffMs > 0) {
-      // Event has started
-      eventStatus.innerHTML = "<b>LIVE NOW</b>";
+      // Event is live
+      eventStatus.innerHTML = "<b>LIVE NOW ON PVFM</b>";
       timeUntilEvent.innerHTML = "";
       console.log(`The event "${show.name}" is live!`);
     } else {

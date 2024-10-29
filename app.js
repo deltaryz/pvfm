@@ -457,6 +457,17 @@ scheduleButton.onclick = function () {
   var modalElement = document.createElement('div');
   modalElement.id = "scheduleModal"
 
+  let modalTitle = document.createElement('div')
+  modalTitle.id = "modalTitle";
+  modalTitle.innerHTML = "Upcoming Shows";
+
+  let modalSubtitle = document.createElement('div');
+  modalSubtitle.id = "modalSubtitle";
+  modalSubtitle.innerHTML = "/ / / <a href='https://ponyvillefm.com/shows'>Full Shows List</a> / / / <a href='https://ponyvillefm.com/team'>Our Team</a> / / / <a href='https://mixes.deltaryz.com'>∆•MIX</a> / / /";
+
+  modalElement.appendChild(modalSubtitle);
+  modalElement.appendChild(modalTitle);
+
   // TODO: Unify this with calculateTimeUntilEvent() somehow?
 
   let currentEventIndex = 1;
@@ -527,8 +538,8 @@ scheduleButton.onclick = function () {
     if (timeDiffMs > 0) {
       // Event has not started
 
-      // cap at 5 events displayed
-      if (currentEventIndex <= 5) modalElement.appendChild(eventContainerDiv);
+      // cap events displayed
+      if (currentEventIndex <= 4) modalElement.appendChild(eventContainerDiv);
 
     } else {
       if (timeEndDiffMs > 0) {

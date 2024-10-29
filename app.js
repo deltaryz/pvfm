@@ -90,6 +90,7 @@ const listenersField = document.getElementById("listeners");
 const stationSelector = document.getElementById("stationSelector");
 const qualitySelector = document.getElementById("qualitySelector");
 const installPWAButton = document.getElementById("installPWA");
+const googlePlayButton = document.getElementById("googlePlayButton");
 const eventDisplay = document.getElementById("eventDisplay");
 const eventStatus = document.getElementById("eventStatus");
 const eventName = document.getElementById("eventName");
@@ -105,10 +106,15 @@ window.addEventListener("beforeinstallprompt", (e) => {
   deferredPrompt = e;
   console.log(`'beforeinstallprompt' event was fired.`);
   // Make button visible
-  // TODO: Show Google Play listing instead
-  if (!window.matchMedia("(display-mode: standalone)").matches)
+  if (!window.matchMedia("(display-mode: standalone)").matches) {
     installPWAButton.hidden = false;
+  }
 });
+
+// Show Google Play if we're not a PWA
+if (!window.matchMedia("(display-mode: standalone)").matches) {
+  googlePlayButton.hidden = false;
+}
 
 // Click on "Install PWA"
 installPWAButton.addEventListener("click", async () => {
@@ -121,6 +127,11 @@ installPWAButton.addEventListener("click", async () => {
   console.log(`User response to the install prompt: ${outcome}`);
   // We've used the prompt and can't use it again, throw it away
   deferredPrompt = null;
+});
+
+// Click on "Google Play"
+googlePlayButton.addEventListener("click", async () => {
+  window.open("https://play.google.com/store/apps/details?id=com.deltaryz.pvfm", "_blank", "noopener");
 });
 
 // Make sure external links don't open in the PWA

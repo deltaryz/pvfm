@@ -155,10 +155,12 @@ window.addEventListener("resize", function (event) {
 // Dropdown to select station
 let stationSelectorDropdown = document.createElement("select");
 stationSelectorDropdown.id = "select";
+stationSelectorDropdown.className = "dropdown";
 
 // Dropdown to select quality
 let qualitySelectorDropdown = document.createElement("select");
 qualitySelectorDropdown.id = "select";
+qualitySelectorDropdown.className = "dropdown";
 
 // Wipe and recreate quality selector based on provided station
 let recreateQualityDropdown = function (station) {
@@ -280,6 +282,7 @@ function stopStreaming() {
 
 // Re-initialize the stream
 function resetStream() {
+  // TODO: Change colors of button based on status
   console.log("Reset");
   stopStreaming();
 
@@ -591,7 +594,7 @@ function calculateTimeUntilEvent(show) {
   if (timeDiffMs > 0) {
     // Event has not started
     eventStatus.innerHTML = "Next event on PVFM:";
-    eventStatus.style.color = "white";
+    eventStatus.style.color = "rgba(255, 255, 255, 0.7)";
     // Convert the difference to hours and minutes
     const hoursLeft = Math.floor(timeDiffMs / (1000 * 60 * 60));
     const minutesLeft = Math.floor(

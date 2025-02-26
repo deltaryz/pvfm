@@ -9,10 +9,10 @@ let selected_stream = "PonyvilleFM";
 let streams = {
   "PonyvilleFM": {
     urls: {
-      "Best Quality - MP3 320": "https://dj.bronyradio.com/streamhq.mp3",
-      "Good Quality - Opus VBR": "https://dj.bronyradio.com/pvfmopus.ogg",
-      "Okay Quality - Vorbis 112": "https://dj.bronyradio.com/pvfm1.ogg",
-      "Low Quality - AAC 64": "https://dj.bronyradio.com/pvfm1mobile.aac",
+      "Best Quality - MP3 320": "https://dj.bronyradio.com/streamhq.mp3",
+      "Good Quality - Opus VBR": "https://dj.bronyradio.com/pvfmopus.ogg",
+      "Okay Quality - Vorbis 112": "https://dj.bronyradio.com/pvfm1.ogg",
+      "Low Quality - AAC 64": "https://dj.bronyradio.com/pvfm1mobile.aac",
     },
     albumText: "PonyvilleFM",
     albumart: "./pvfm1.png",
@@ -71,13 +71,18 @@ stream_url = Object.values(streams[selected_stream].urls)[streams[selected_strea
 let schedule;
 let audio;
 let isPlaying = false;
+let songHistory = JSON.parse(localStorage.getItem("songHistory"));
+if (songHistory == null) songHistory = [];
 
 // Metadata for currently playing song
 let songDetails = {
   artist: "",
   title: "",
+  album: "",
+  albumShort: "",
   albumArt: "",
   listeners: "",
+  startTime: "",
 };
 
 // TODO: these should be inside an object or something this is a mess
@@ -304,7 +309,7 @@ function resetStream() {
     isPlaying = true;
     fetchSongDetails();
     updateButtonText();
-    resetButton.innerHTML = "↻ Reset Stream";
+    resetButton.innerHTML = "↻ Reset";
   });
 }
 
@@ -358,41 +363,38 @@ async function fetchSongDetails() {
 
     let response;
     let data;
+    let changeCheck = songDetails.artist + songDetails.title; // the user never sees this
 
     // TODO: Detect unqiue albumart for PVFM2 and Luna since azuracast actually gives us that
 
-    // Override PVFM2
-    if (currentStream.albumText == "PonyvilleFM2 Chill") {
-      response = await fetch(
-        "https://luna.ponyvillefm.com/api/nowplaying_static/pvfm2.json"
-      );
-      data = await response.json();
-      nowPlayingData = data.now_playing.song || {};
+    // Pull pvfm metadata
+    response = await fetch("https://ponyvillefm.com/data/nowplaying");
+    data = await response.json();
+    nowPlayingData = data.one || {};
+    songDetails.albumShort = "PVFM";
 
-      // Populate local medatata
-      songDetails.listeners = data.listeners.current || "";
-      songDetails.artist = nowPlayingData.artist || "";
-      songDetails.title = nowPlayingData.title || "";
-    } else {
-      // Pull pvfm metadata
-      response = await fetch("https://ponyvillefm.com/data/nowplaying");
-      data = await response.json();
-      nowPlayingData = data.one || {};
-
-      // TODO: Maybe use a different field than albumText for this?
-      // Override Luna Radio
-      if (currentStream.albumText == "Luna Radio")
-        nowPlayingData = data.lunaradio || {};
-
-      // Override PVFM3
-      if (currentStream.albumText == "PonyvilleFM3 No DJs")
-        nowPlayingData = data.free || {};
-
-      // Populate local metadata
-      songDetails.listeners = nowPlayingData.listeners || "";
-      songDetails.artist = nowPlayingData.artist || "";
-      songDetails.title = nowPlayingData.title || "";
+    // TODO: Maybe use a different field than albumText for this?
+    // Override Luna Radio
+    if (currentStream.albumText == "Luna Radio") {
+      nowPlayingData = data.lunaradio || {};
+      songDetails.albumShort = "Luna";
     }
+
+    // Override PVFM3
+    if (currentStream.albumText == "PonyvilleFM3 No DJs") {
+      nowPlayingData = data.free || {};
+      songDetails.albumShort = "PVFM3";
+    }
+
+    if (currentStream.albumText == "PonyvilleFM2 Chill") {
+      nowPlayingData = data.two || {};
+      songDetails.albumShort = "PVFM2";
+    }
+
+    // Populate local metadata
+    songDetails.listeners = nowPlayingData.listeners || "0";
+    songDetails.artist = nowPlayingData.artist || "";
+    songDetails.title = nowPlayingData.title || "";
 
     songDetails.album = currentStream.albumText; // Use album name associated with URL
     songDetails.albumArt = currentStream.albumart; // Use album art associated with URL
@@ -400,9 +402,32 @@ async function fetchSongDetails() {
     // Update page
     artistField.innerHTML = songDetails.artist;
     titleField.innerHTML = songDetails.title;
-    listenersField.innerHTML = "Listeners: " + songDetails.listeners;
+    listenersField.innerHTML = "🐴 " + songDetails.listeners;
 
-    if (songDetails.listeners == 0) listenersField.innerHTML = ""; // ssshhhh
+    // Check if the song has changed
+    if (changeCheck != songDetails.artist + songDetails.title) {
+      console.log("Song has changed");
+      songDetails.startTime = Date.now();
+
+      // put at the beginning of songHistory
+      if (songHistory[0] != undefined) {
+        // check for duplicate
+        if (songHistory[0].title != songDetails.title) songHistory.unshift(structuredClone(songDetails));
+      } else {
+        songHistory.unshift(structuredClone(songDetails));
+      }
+
+      // cap history length
+      if (songHistory.length >= 15) songHistory.length = 15;
+
+      console.log("History: \n", songHistory);
+
+      // save in localStorage
+      localStorage.setItem("songHistory", JSON.stringify(songHistory));
+
+    } else {
+      console.log("Song has not changed")
+    }
 
     // Display time until upcoming event
     if (schedule != undefined) calculateTimeUntilEvent(schedule[0]);
@@ -410,7 +435,7 @@ async function fetchSongDetails() {
     // Update media controls
     updateMediaSession();
 
-    console.log("Updated song details:", songDetails);
+    console.log("Current song details:", songDetails);
   } catch (error) {
     // TODO: Visualize error on page
 
@@ -463,6 +488,65 @@ async function fetchSchedule() {
   } catch (error) {
     console.error("There was a problem with the fetch operation:", error);
   }
+}
+
+// Song history modal
+let historyButton = document.getElementById("historyButton");
+historyButton.onclick = function () {
+  console.log("Activating song history modal")
+
+  var modalElement = document.createElement('div');
+  modalElement.id = "historyModal";
+
+  let modalTitle = document.createElement('div');
+  modalTitle.id = 'modalTitle';
+  modalTitle.innerHTML = "Playback History";
+
+  modalElement.appendChild(modalTitle);
+
+  for (songHistoryIndex in songHistory) {
+    let songHistoryElement = songHistory[songHistoryIndex];
+
+    let songTime = new Date(songHistoryElement.startTime);
+
+    // container for each thing
+    let containerDiv = document.createElement('div');
+    containerDiv.id = "songHistoryContainer";
+
+    modalElement.appendChild(containerDiv);
+
+    // each station gets an icon
+    let stationIcon = document.createElement('img');
+    switch (songHistoryElement.albumShort) {
+      case 'PVFM':
+        stationIcon.src = "./pvfm1_small.png";
+        console.log("pvfm lol")
+        break;
+      case 'PVFM2':
+        stationIcon.src = "./pvfm2_small.png";
+        break;
+      case 'PVFM3':
+        stationIcon.src = "./pvfm3_small.png";
+        break;
+      case 'Luna':
+        stationIcon.src = "./lunaradio_small.png";
+        break;
+    }
+
+    stationIcon.style.height = "40px";
+
+    containerDiv.appendChild(stationIcon);
+
+    // actual metadata
+    let songData = document.createElement('div');
+    songData.id = "songHistoryData";
+    songData.innerHTML = "<b>" + songTime.toLocaleTimeString("en-US") + "</b><br/>" + songHistoryElement.artist + "<br/>" + songHistoryElement.title;
+
+    containerDiv.appendChild(songData);
+  }
+  modalElement.style.fontSize = 9;
+
+  mui.overlay('on', modalElement);
 }
 
 // Prep schedule modal when schedule button is clicked
@@ -677,14 +761,19 @@ function preventZoom(e) {
 
 // Prevent scroll only outside of slider elements
 function preventScroll(e) {
-  const isSlider = e.target.closest(".slider");
-  if (!isSlider) {
-    e.preventDefault();
+  if (document.getElementById("historyModal") == null) {
+    const isSlider = e.target.closest(".slider");
+    if (!isSlider) {
+      e.preventDefault();
+    }
+  } else {
+    document.body.style.overflow = "auto";
   }
 }
 
 // Run the function on page load and resize
 window.addEventListener("resize", disableScrollAndZoom);
+window.addEventListener("mui.overlay.off", disableScrollAndZoom);
 
 window.onload = () => {
   disableScrollAndZoom();

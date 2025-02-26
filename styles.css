@@ -20,7 +20,7 @@ body {
   font-weight: bold;
 }
 
-:is(#resetButton, #scheduleButton):hover {
+:is(#resetButton, #scheduleButton, #historyButton):hover {
   background-color: #505050;
 }
 

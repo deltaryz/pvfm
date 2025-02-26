@@ -267,6 +267,23 @@ function playPause() {
     audio.pause();
   } else {
     audio.play();
+
+    // TODO: put this in a function and merge with the stuff in fetchSongDetails()
+    let changeCheck = songDetails.artist + songDetails.title; // the user never sees this
+    if (songHistory[0] != null) {
+      if (changeCheck == songHistory[0].artist + songHistory[0].title) {
+        // Song has not changed since our last save
+      } else {
+        songHistory.unshift(structuredClone(songDetails));
+      }
+    } else {
+      songHistory.unshift(structuredClone(songDetails));
+    }
+
+    // cap history length
+    if (songHistory.length >= 15) songHistory.length = 15;
+    console.log("History: \n", songHistory);
+
   }
   isPlaying = !isPlaying;
   updateButtonText();
@@ -409,17 +426,23 @@ async function fetchSongDetails() {
       console.log("Song has changed");
       songDetails.startTime = Date.now();
 
-      // put at the beginning of songHistory
-      if (songHistory[0] != undefined) {
-        // check for duplicate
-        if (songHistory[0].title != songDetails.title) songHistory.unshift(structuredClone(songDetails));
+      // TODO: put this in a function and merge with the stuff in playPause()
+
+      // only update now playing if it's actually playing
+      if (isPlaying) {
+        // put at the beginning of songHistory
+        if (songHistory[0] != undefined) {
+          // check for duplicate
+          if (songHistory[0].title != songDetails.title) songHistory.unshift(structuredClone(songDetails));
+        } else {
+          songHistory.unshift(structuredClone(songDetails));
+        }
       } else {
-        songHistory.unshift(structuredClone(songDetails));
+        console.log("Song is not actually playing, not saving");
       }
 
       // cap history length
       if (songHistory.length >= 15) songHistory.length = 15;
-
       console.log("History: \n", songHistory);
 
       // save in localStorage
@@ -520,7 +543,6 @@ historyButton.onclick = function () {
     switch (songHistoryElement.albumShort) {
       case 'PVFM':
         stationIcon.src = "./pvfm1_small.png";
-        console.log("pvfm lol")
         break;
       case 'PVFM2':
         stationIcon.src = "./pvfm2_small.png";

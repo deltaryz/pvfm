@@ -266,6 +266,7 @@ function playPause() {
   isPlaying = !isPlaying;
   updateButtonText();
   updateMediaSession();
+  audio.volume = volumeControl.value / 100;
 }
 
 // Kill everything
@@ -295,6 +296,7 @@ function resetStream() {
   // Ensure the audio stream plays after it is loaded
   audio.addEventListener("canplay", () => {
     console.log("Audio can play, starting playback.");
+    audio.volume = volumeControl.value / 100;
     audio.play().catch((error) => {
       console.error("Error starting audio:", error);
       // TODO: Show error on page
@@ -573,10 +575,6 @@ scheduleButton.onclick = function () {
   mui.overlay('on', modalElement);
 }
 
-// just like the one below it, except for the modal so its different
-function calculateTimeForDisplayModal(show) {
-
-}
 
 // calculate and print remaining time until the event
 function calculateTimeUntilEvent(show) {

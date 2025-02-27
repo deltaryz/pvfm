@@ -73,6 +73,8 @@ let audio;
 let isPlaying = false;
 let songHistory = JSON.parse(localStorage.getItem("songHistory"));
 if (songHistory == null) songHistory = [];
+let sleepTimerCountdown = -1; // -1 means no active timer
+let sleepTimerCheckID;
 
 // Metadata for currently playing song
 let songDetails = {
@@ -100,6 +102,7 @@ const eventDisplay = document.getElementById("eventDisplay");
 const eventStatus = document.getElementById("eventStatus");
 const eventName = document.getElementById("eventName");
 const timeUntilEvent = document.getElementById("timeUntilEvent");
+const sleepTimerButton = document.getElementById("sleepTimer");
 
 // Initialize deferredPrompt for use later to show browser install prompt.
 let deferredPrompt;
@@ -237,7 +240,9 @@ qualitySelectorDropdown.addEventListener("change", function (event) {
 });
 
 // Add the dropdowns to the page
+// document.getElementsByClassName("inner")[0].removeChild(listenersField);
 stationSelector.appendChild(stationSelectorDropdown);
+stationSelector.appendChild(listenersField);
 stationSelector.appendChild(qualitySelectorDropdown);
 
 console.log("Stream URL: " + stream_url);
@@ -587,7 +592,6 @@ scheduleButton.onclick = function () {
   modalSubtitle.id = "modalSubtitle";
   modalSubtitle.innerHTML = "/ / / <a href='https://ponyvillefm.com/shows'>Full Shows List</a> / / / <a href='https://ponyvillefm.com/team'>Our Team</a> / / / <a href='https://mixes.deltaryz.com'>∆•MIX</a> / / /";
 
-  modalElement.appendChild(modalSubtitle);
   modalElement.appendChild(modalTitle);
 
   // TODO: Unify this with calculateTimeUntilEvent() somehow?
@@ -677,6 +681,8 @@ scheduleButton.onclick = function () {
 
     console.log(pvfmEvent);
   }
+
+  modalElement.appendChild(modalSubtitle);
 
   mui.overlay('on', modalElement);
 }
@@ -802,6 +808,112 @@ window.onload = () => {
   audio = new Audio(stream_url);
   audio.preload = "none";
 };
+
+// Keep track of sleep timer
+let sleepTimerCheck = function () {
+  // use clearInterval(sleepTimerCheckID) to stop
+
+  console.log("Sleep timer check, current value: ", sleepTimerCountdown);
+  if (sleepTimerCountdown != -1) {
+    // timer is active
+    sleepTimerCountdown--;
+    sleepTimerButton.innerHTML = "💤 " + minutesToHHMM(sleepTimerCountdown);
+
+    // check if timer has reached 0
+    if (sleepTimerCountdown == 0) {
+      console.log("Sleep timer completed, stopping stream...");
+      stopStreaming();
+      clearInterval(sleepTimerCheckID);
+      sleepTimerCountdown = -1;
+      sleepTimerButton.innerHTML = "💤 Timer";
+      sleepTimerButton.style.color = "#ffffff80";
+    }
+
+  } else {
+    sleepTimerButton.innerHTML = "💤 Timer";
+    sleepTimerButton.style.color = "#ffffff80";
+  }
+}
+
+sleepTimerButton.onclick = function () {
+  // show sleep timer config modal
+
+  let modalElement = document.createElement('div');
+  modalElement.id = "sleepTimerModal";
+
+  let modalTitle = document.createElement('div');
+  modalTitle.id = "modalTitle";
+  modalTitle.innerHTML = "Sleep Timer";
+
+  let minuteBox = document.createElement('input');
+  minuteBox.id = "minuteBox";
+  minuteBox.type = "text";
+  minuteBox.inputMode = "numeric";
+  minuteBox.pattern = "[0-9]*";
+  minuteBox.maxLength = 4;
+  minuteBox.placeholder = "Minutes";
+
+  // populate box with existing timer if active
+  if (sleepTimerCountdown > 0) minuteBox.value = sleepTimerCountdown;
+
+  let okButton = document.createElement('button');
+  okButton.id = "sleepTimerOK";
+  okButton.innerHTML = "<b>OK</b>";
+
+  let cancelButton = document.createElement('button');
+  cancelButton.id = "sleepTimerCancel";
+  cancelButton.innerHTML = "Stop";
+
+  modalElement.appendChild(modalTitle);
+  modalElement.appendChild(minuteBox);
+  modalElement.appendChild(okButton);
+
+  modalElement.appendChild(document.createElement('div')); // <br/> breaks it for some reason
+
+  modalElement.appendChild(cancelButton);
+
+  // user has pressed the OK button
+  okButton.onclick = function () {
+    // validate input
+    let sleepTimerInput = parseInt(minuteBox.value);
+    if (Number.isNaN(sleepTimerInput) || sleepTimerInput < 1) {
+      // invalid input
+      console.log("Invalid input");
+    } else {
+      // valid input
+
+      // make sure we kill any existing timer
+      clearInterval(sleepTimerCheckID);
+
+      console.log("Now engaging sleep timer...", sleepTimerInput);
+      sleepTimerCountdown = sleepTimerInput;
+      sleepTimerCheckID = setInterval(sleepTimerCheck, 60000);
+      sleepTimerButton.innerHTML = "💤 " + minutesToHHMM(sleepTimerCountdown);
+      sleepTimerButton.style.color = "yellow";
+      mui.overlay('off', modalElement);
+    }
+  };
+
+  // user has pressed the Stop button
+  cancelButton.onclick = function () {
+    console.log("Cancelling sleep timer...");
+    clearInterval(sleepTimerCheckID); // stop checking the timer
+    sleepTimerCountdown = -1;
+    sleepTimerCheck();
+    mui.overlay('off', modalElement);
+  };
+
+  mui.overlay('on', modalElement);
+}
+
+// Converts minutes to HH:MM string
+function minutesToHHMM(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  const formattedHours = String(hours).padStart(2, '0');
+  const formattedMinutes = String(remainingMinutes).padStart(2, '0');
+  return `${formattedHours}:${formattedMinutes}`;
+}
 
 // Run the fetch schedule function
 fetchSchedule();

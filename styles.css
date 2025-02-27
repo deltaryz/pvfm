@@ -5,6 +5,10 @@ body {
   color: white;
 }
 
+input {
+  background-color: white;
+}
+
 :is(#resetButton, #scheduleButton, #historyButton) {
   font-size: 15px;
   color: white;
@@ -25,7 +29,7 @@ body {
 }
 
 #volumeControl {
-  margin-top: 5px;
+  margin-top: 0px;
   width: 400px;
   max-width: 60%;
 }
@@ -189,9 +193,27 @@ a {
 #listeners {
   margin-top: 10px;
   font-size: 14px;
+  width: 50px;
+  display: inline-block;
 }
 
-:is(#scheduleModal, #historyModal) {
+#sleepTimer {
+  width: 80px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  border-radius: 0px;
+  background-color: #36363680;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#sleepTimer:hover {
+  background-color: #3d3d3d;
+}
+
+:is(#scheduleModal, #historyModal, #sleepTimerModal) {
   width: 300px;
   margin: 100px auto;
   /* margin-top: 15px; */
@@ -209,7 +231,7 @@ a {
 
 #modalTitle {
   background-image: linear-gradient(#ffbdd9, rgba(255, 46, 161, 0.8));
-  filter: drop-shadow(2px 2px 2px black);
+  filter: drop-shadow(2px 2px 1.5px rgba(0, 0, 0, 0.7));
   font-weight: bold;
   text-shadow: 1px 1px 2px black;
   width: 70%;
@@ -229,10 +251,44 @@ a {
   color: rgba(255, 255, 255, 0.432);
   padding-top: 4px;
   padding-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 #modalSubtitle a {
   text-shadow: 1px 1px 1px black;
+}
+
+#minuteBox {
+  width: 80px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  text-align: center;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
+}
+
+#sleepTimerOK {
+  margin-left: 10px;
+  background-color: #00ff2a;
+  outline-style: solid;
+  outline-color: black;
+  outline-width: 1.5px;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
+}
+
+#sleepTimerCancel {
+  width: 90px;
+  border-radius: 3px;
+  font-weight: bold;
+  outline-style: solid;
+  outline-color: black;
+  outline-width: 1.5px;
+  background-image: linear-gradient(rgb(255, 56, 56), rgb(189, 9, 9));
+  text-shadow: 1px 1px 1px black;
+  color: white;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
 }
 
 .bottomButton {

@@ -426,6 +426,12 @@ async function fetchSongDetails() {
     titleField.innerHTML = songDetails.title;
     listenersField.innerHTML = "🐴 " + songDetails.listeners;
 
+    // Rare chance for unicorn
+    if ((Math.floor(Math.random() * 69) + 1) == 69) {
+      console.log("Unicorn listener icon!");
+      listenersField.innerHTML = "🦄 " + songDetails.listeners;
+    }
+
     // Check if the song has changed
     if (changeCheck != songDetails.artist + songDetails.title) {
       console.log("Song has changed");

@@ -1,6 +1,13 @@
 // PonyvilleFM Web Interface & Mobile App
 // Created by deltaryz
 
+// Unicorn mode chance
+let unicornMode = false;
+if ((Math.floor(Math.random() * 69) + 1) == 69) {
+  unicornMode = true;
+  console.log("Unicorn mode activated!");
+}
+
 // This represents the current selected stream
 // Default is MP3 320 (Best Quality)
 let stream_url = "https://dj.bronyradio.com/streamhq.mp3";
@@ -424,12 +431,12 @@ async function fetchSongDetails() {
     // Update page
     artistField.innerHTML = songDetails.artist;
     titleField.innerHTML = songDetails.title;
-    listenersField.innerHTML = "🐴 " + songDetails.listeners;
 
-    // Rare chance for unicorn
-    if ((Math.floor(Math.random() * 69) + 1) == 69) {
-      console.log("Unicorn listener icon!");
+    // Show a unicorn if we're in unicorn mode
+    if (unicornMode) {
       listenersField.innerHTML = "🦄 " + songDetails.listeners;
+    } else {
+      listenersField.innerHTML = "🐴 " + songDetails.listeners;
     }
 
     // Check if the song has changed

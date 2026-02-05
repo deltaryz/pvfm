@@ -921,6 +921,6 @@ fetchSchedule();
 // Call the function initially
 fetchSongDetails();
 
-// Set up the interval to call the function every 20 seconds
+// Set up the interval to call the function every 4 seconds
 // TODO: Make this adjustable
-setInterval(fetchSongDetails, 20000);
+setInterval(fetchSongDetails, 4000);

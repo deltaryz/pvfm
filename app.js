@@ -22,7 +22,7 @@ let streams = {
       "Low Quality - AAC 64": "https://dj.bronyradio.com/pvfm1mobile.aac",
     },
     albumText: "PonyvilleFM",
-    albumart: "./pvfm1.png",
+    albumart: "./images/stations/pvfm1.png",
     lastQuality: 2, // We modify this to keep track of what the user selected
   },
   "PonyvilleFM2 Chill": {
@@ -30,7 +30,7 @@ let streams = {
       "MP3 128": "https://luna.ponyvillefm.com/listen/pvfm2/radio.mp3",
     },
     albumText: "PonyvilleFM2 Chill",
-    albumart: "./pvfm2.png",
+    albumart: "./images/stations/pvfm2.png",
     lastQuality: 0,
   },
   "PonyvilleFM3 No DJs": {
@@ -39,7 +39,7 @@ let streams = {
       "Vorbis 112": "https://dj.bronyradio.com/pvfmfree.ogg",
     },
     albumText: "PonyvilleFM3 No DJs",
-    albumart: "./pvfm3.png",
+    albumart: "./images/stations/pvfm3.png",
     lastQuality: 0,
   },
   "Luna Radio": {
@@ -47,7 +47,7 @@ let streams = {
       "MP3 128": "https://luna.ponyvillefm.com/listen/lunaradio/radio.mp3",
     },
     albumText: "Luna Radio",
-    albumart: "./lunaradio.png",
+    albumart: "./images/stations/lunaradio.png",
     lastQuality: 0,
   },
 }
@@ -352,7 +352,7 @@ volumeControl.addEventListener("input", (event) => {
 
 // Play/pause button update based on isPlaying variable
 function updateButtonText() {
-  playPauseIcon.src = isPlaying ? "pause.svg" : "play.svg";
+  playPauseIcon.src = isPlaying ? "./images/ui/pause.svg" : "./images/ui/play.svg";
 }
 
 // Update metadata info for browsers and mobile devices
@@ -560,16 +560,16 @@ historyButton.onclick = function () {
     let stationIcon = document.createElement('img');
     switch (songHistoryElement.albumShort) {
       case 'PVFM':
-        stationIcon.src = "./pvfm1_small.png";
+        stationIcon.src = "./images/stations/pvfm1_small.png";
         break;
       case 'PVFM2':
-        stationIcon.src = "./pvfm2_small.png";
+        stationIcon.src = "./images/stations/pvfm2_small.png";
         break;
       case 'PVFM3':
-        stationIcon.src = "./pvfm3_small.png";
+        stationIcon.src = "./images/stations/pvfm3_small.png";
         break;
       case 'Luna':
-        stationIcon.src = "./lunaradio_small.png";
+        stationIcon.src = "./images/stations/lunaradio_small.png";
         break;
     }
 

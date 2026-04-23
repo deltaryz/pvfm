@@ -1,6 +1,6 @@
 # PVFM Mobile-Friendly Web Player, PWA, & Mobile App
 
-![App Icon](192.png)
+![App Icon](images/icons/192.png)
 
 ## Now available in the [Google Play Store!](https://play.google.com/store/apps/details?id=com.deltaryz.pvfm)
 

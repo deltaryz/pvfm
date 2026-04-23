@@ -1,6 +1,6 @@
 # PVFM Mobile-Friendly Web Player, PWA, & Mobile App
 
-![App Icon](images/icons/192.png)
+![App Icon](images/icons/transparent_icon.png)
 
 ## Now available in the [Google Play Store!](https://play.google.com/store/apps/details?id=com.deltaryz.pvfm)
 
@@ -17,8 +17,16 @@ PonyvilleFM is an internet radio station featuring live DJ performances, album r
 - Upcoming events
 - More coming soon!
 
-[PonyvilleFM official website](https://ponyvillefm.com)
+### [PonyvilleFM official website](https://ponyvillefm.com)
 
 [Run this app in your browser!](https://pvfm.deltaryz.com)
 
 [Google Play Store](https://play.google.com/store/apps/details?id=com.deltaryz.pvfm)
+
+## AI Usage Disclaimer
+
+The primary functions and logic in this project were all written by hand.
+
+AI has been leveraged starting 2026-04-23 to accelerate tedious restructuring, identify and fix errors, and potentially other uses later.
+
+**Any code written by AI will be committed with user.name set as the model that generated it.**

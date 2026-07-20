@@ -80,6 +80,7 @@ let audio;
 let isPlaying = false;
 let songHistory = JSON.parse(localStorage.getItem("songHistory"));
 if (songHistory == null) songHistory = [];
+scrubBlacklistedHistory();
 let sleepTimerCountdown = -1; // -1 means no active timer
 let sleepTimerCheckID;
 
@@ -280,21 +281,7 @@ function playPause() {
   } else {
     audio.play();
 
-    // TODO: put this in a function and merge with the stuff in fetchSongDetails()
-    let changeCheck = songDetails.artist + songDetails.title; // the user never sees this
-    if (songHistory[0] != null) {
-      if (changeCheck == songHistory[0].artist + songHistory[0].title) {
-        // Song has not changed since our last save
-      } else {
-        songHistory.unshift(structuredClone(songDetails));
-      }
-    } else {
-      songHistory.unshift(structuredClone(songDetails));
-    }
-
-    // cap history length
-    if (songHistory.length >= 15) songHistory.length = 15;
-    console.log("History: \n", songHistory);
+    addToHistory(songDetails);
 
   }
   isPlaying = !isPlaying;
@@ -336,7 +323,7 @@ function resetStream() {
       // TODO: Show error on page
     });
     isPlaying = true;
-    fetchSongDetails();
+    fetchSongDetails({ resume: true });
     updateButtonText();
     resetButton.innerHTML = "↻ Reset";
   });
@@ -386,7 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // fetch and update song details
-async function fetchSongDetails() {
+async function fetchSongDetails(options = {}) {
   try {
     let currentStream = streams[selected_stream];
 
@@ -440,31 +427,20 @@ async function fetchSongDetails() {
     }
 
     // Check if the song has changed
-    if (changeCheck != songDetails.artist + songDetails.title) {
-      console.log("Song has changed");
+    // On resume (play button or reset), always attempt to add to history
+    // even if the API returned the same song. Without this, songs that rotated
+    // during a pause never get written because the pause-time 4s interval already
+    // updated songDetails, so the post-resume fetch sees no change.
+    if (options.resume || (changeCheck != songDetails.artist + songDetails.title)) {
+      console.log(options.resume ? "Resume: recording current song" : "Song has changed");
       songDetails.startTime = Date.now();
 
-      // TODO: put this in a function and merge with the stuff in playPause()
-
-      // only update now playing if it's actually playing
+      // only update history if it's actually playing
       if (isPlaying) {
-        // put at the beginning of songHistory
-        if (songHistory[0] != undefined) {
-          // check for duplicate
-          if (songHistory[0].title != songDetails.title) songHistory.unshift(structuredClone(songDetails));
-        } else {
-          songHistory.unshift(structuredClone(songDetails));
-        }
+        addToHistory(songDetails);
       } else {
         console.log("Song is not actually playing, not saving");
       }
-
-      // cap history length
-      if (songHistory.length >= 15) songHistory.length = 15;
-      console.log("History: \n", songHistory);
-
-      // save in localStorage
-      localStorage.setItem("songHistory", JSON.stringify(songHistory));
 
     } else {
       console.log("Song has not changed")
@@ -482,6 +458,80 @@ async function fetchSongDetails() {
 
     console.error("Error fetching song details:", error);
   }
+}
+
+// check if a song is blacklisted from the history log
+// returns { isBlacklisted, reasons }
+// `reasons` is a map of { testName: true|false } for every check that ran
+// `isBlacklisted` is true if ANY check is true.
+//
+// add reasons["ruleName"] = CONDITION to add a new blacklist rule.
+function isBlacklisted(details) {
+  const reasons = {};
+
+  reasons["placeholderInTitle"] = details.title.includes("Fetching info");
+  reasons["placeholderInArtist"] = details.artist.includes("Fetching info");
+  reasons["emptyTitle"] = details.title === "";
+  reasons["emptyArtist"] = details.artist === "";
+
+  const isBlacklisted = Object.values(reasons).some(v => v);
+
+  return { isBlacklisted, reasons };
+}
+
+// remove every blacklisted entry from songHistory
+// runs once on page load to scrub entries that predate the blacklist rules.
+// iterates in reverse to avoid index-shift bugs from splice().
+function scrubBlacklistedHistory() {
+  let evicted = 0;
+  for (let i = songHistory.length - 1; i >= 0; i--) {
+    const entryVerdict = isBlacklisted(songHistory[i]);
+    if (entryVerdict.isBlacklisted) {
+      console.log(
+        "Evicting blacklisted history[" + i + "]:",
+        songHistory[i].title, "-", songHistory[i].artist,
+        "reasons:", entryVerdict.reasons
+      );
+      songHistory.splice(i, 1);
+      evicted++;
+    }
+  }
+  if (evicted > 0) {
+    localStorage.setItem("songHistory", JSON.stringify(songHistory));
+  }
+}
+
+// Add a song to songHistory
+// Both playPause() and fetchSongDetails() use this.
+function addToHistory(details) {
+  // check blasklist
+  const verdict = isBlacklisted(details);
+  if (verdict.isBlacklisted) {
+    console.log(
+      "Skipping history entry (blacklisted):",
+      details.title, "-", details.artist,
+      "reasons:", verdict.reasons
+    );
+    return;
+  }
+
+  // check it's actually different
+  const changeCheck = details.artist + details.title;
+  const last = songHistory[0];
+  const isDuplicate = last != null && last != undefined &&
+    (last.artist + last.title) === changeCheck;
+
+  if (!isDuplicate) {
+    songHistory.unshift(structuredClone(details));
+  }
+
+  // cap list at 15
+  if (songHistory.length >= 15) {
+    songHistory.length = 15;
+  }
+
+  console.log("History: \n", songHistory);
+  localStorage.setItem("songHistory", JSON.stringify(songHistory));
 }
 
 // fetch schedule from PVFM endpoint

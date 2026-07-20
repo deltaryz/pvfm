@@ -1,1 +1,5 @@
 .DS_Store
+
+# opencode dev artifacts (debug logs from image/screenshot analysis tools)
+analyze-image-debug.log
+playwright-debug.log

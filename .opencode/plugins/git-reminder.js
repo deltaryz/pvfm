@@ -19,6 +19,13 @@ export default async ({ project, client, $, directory, worktree }) => {
     !BUILTIN_TOOLS.has(tool); // anything not a built-in = MCP tool
 
   const buildReminder = (modelName) =>
+    "── AUTOMATED MESSAGE (injected by .opencode/plugins/git-reminder.js) ──\n" +
+    "This is NOT a request from the user. It is an automated periodic reminder.\n" +
+    "Standing user instructions take priority over this automation — if the user\n" +
+    "has explicitly said 'don't commit' or 'leave the tree dirty', ignore the\n" +
+    "commit suggestion below and follow the user's actual intent.\n" +
+    "────────────────────────────────────────────────────────────────────────\n" +
+    "\n" +
     "Git check — commit if appropriate:\n" +
     `1. If no repo: \`git init && git add -A && git -c user.name='${modelName}' -c user.email='ai@local' commit -m 'Initial commit'\`\n` +
     `2. Otherwise: \`git add -A && git -c user.name='${modelName}' -c user.email='ai@local' commit -m '<what changed and why>'\`\n` +

@@ -384,7 +384,11 @@ async function fetchSongDetails(options = {}) {
     // TODO: Detect unqiue albumart for PVFM2 and Luna since azuracast actually gives us that
 
     // Pull pvfm metadata
-    response = await fetch("https://ponyvillefm.com/data/nowplaying");
+    // Same-origin: /data/* is served by the pvfm-proxy container behind Caddy.
+    // PVFM stopped sending Access-Control-Allow-Origin on 2026-10-21, which killed
+    // the direct cross-origin fetch. Relative paths also keep this working on any
+    // host that fronts the proxy.
+    response = await fetch("/data/nowplaying");
     data = await response.json();
     nowPlayingData = data.one || {};
     songDetails.albumShort = "PVFM";
@@ -473,6 +477,10 @@ function isBlacklisted(details) {
   reasons["placeholderInArtist"] = details.artist.includes("Fetching info");
   reasons["emptyTitle"] = details.title === "";
   reasons["emptyArtist"] = details.artist === "";
+  // pvfm-proxy serves "Error: serverside timeout" as the title once upstream
+  // has been unreachable for six minutes. That is a visible state, not a song,
+  // so keep it out of the history log. Runs on load, so older saved entries go too.
+  reasons["serverTimeout"] = (details.title || "").startsWith("Error:");
 
   const isBlacklisted = Object.values(reasons).some(v => v);
 
@@ -536,7 +544,8 @@ function addToHistory(details) {
 
 // fetch schedule from PVFM endpoint
 async function fetchSchedule() {
-  const url = "https://ponyvillefm.com/data/schedule";
+  // Same-origin via pvfm-proxy, see fetchSongDetails().
+  const url = "/data/schedule";
 
   try {
     const response = await fetch(url);

@@ -300,6 +300,10 @@ function stopStreaming() {
   console.log("Stop");
   isPlaying = false;
   updateButtonText();
+  // a stopped stream is neither playing nor paused
+  try {
+    if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "none";
+  } catch (e) {}
 }
 
 // Re-initialize the stream
@@ -340,6 +344,19 @@ volumeControl.addEventListener("input", (event) => {
 // Play/pause button update based on isPlaying variable
 function updateButtonText() {
   playPauseIcon.src = isPlaying ? "./images/ui/pause.svg" : "./images/ui/play.svg";
+
+  // Tell the OS whether this session is playing. Without it playbackState stays
+  // "none" forever (measured headless: "none" while currentTime climbed), so the
+  // lock screen / notification can show an idle session during playback.
+  // try/catch because MediaSession support is partial on iOS -- a throw here
+  // would take out the rest of the click handler, and this is a nice-to-have.
+  try {
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+    }
+  } catch (e) {
+    console.warn("playbackState not settable here", e);
+  }
 }
 
 // Update metadata info for browsers and mobile devices

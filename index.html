@@ -8,7 +8,7 @@
     <script src="./css/mui.min.js"></script>
 
     <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="./manifest.json">
     <link rel="icon" href="./images/icons/favicon.ico">
 
     <link rel="preload" as="image" href="./images/stations/pvfm1_small.png">
@@ -23,7 +23,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js').then((registration) => {
+                navigator.serviceWorker.register('./service-worker.js').then((registration) => {
                     console.log('Service Worker registered with scope:', registration.scope);
                 }).catch((error) => {
                     console.error('Service Worker registration failed:', error);

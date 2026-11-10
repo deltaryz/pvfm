@@ -389,6 +389,12 @@ document.addEventListener("DOMContentLoaded", () => {
   updateButtonText();
 });
 
+// dev environment override: five server serves through the code-server proxy, where /data/ does not exist
+// TODO: more graceful handling of dev environment paths
+const DEV_DATA_BASE = /(^|\.)paws-on\.me$/.test(location.hostname) || location.pathname.startsWith("/proxy/")
+  ? "https://pvfm.deltaryz.com/"
+  : "";
+
 // fetch and update song details
 async function fetchSongDetails(options = {}) {
   try {
@@ -405,7 +411,7 @@ async function fetchSongDetails(options = {}) {
     // PVFM stopped sending Access-Control-Allow-Origin on 2026-10-21, which killed
     // the direct cross-origin fetch. Relative paths also keep this working on any
     // host that fronts the proxy.
-    response = await fetch("data/nowplaying");
+    response = await fetch(DEV_DATA_BASE + "data/nowplaying");
     data = await response.json();
     nowPlayingData = data.one || {};
     songDetails.albumShort = "PVFM";
@@ -562,7 +568,7 @@ function addToHistory(details) {
 // fetch schedule from PVFM endpoint
 async function fetchSchedule() {
   // Same-origin via pvfm-proxy, see fetchSongDetails().
-  const url = "data/schedule";
+  const url = DEV_DATA_BASE + "data/schedule";
 
   try {
     const response = await fetch(url);
